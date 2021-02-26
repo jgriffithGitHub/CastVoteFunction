@@ -10,34 +10,84 @@ import com.microsoft.azure.functions.annotation.FunctionName;
 import com.microsoft.azure.functions.annotation.HttpTrigger;
 
 import java.util.Optional;
+import com.mysql.cj.jdbc.AbandonedConnectionCleanupThread;
 
-/**
- * Azure Functions with HTTP Trigger.
- */
-public class Function {
-    /**
-     * This function listens at endpoint "/api/HttpExample". Two ways to invoke it using "curl" command in bash:
-     * 1. curl -d "HTTP Body" {your host}/api/HttpExample
-     * 2. curl "{your host}/api/HttpExample?name=HTTP%20Query"
-     */
-    @FunctionName("HttpExample")
-    public HttpResponseMessage run(
-            @HttpTrigger(
-                name = "req",
-                methods = {HttpMethod.GET, HttpMethod.POST},
-                authLevel = AuthorizationLevel.ANONYMOUS)
-                HttpRequestMessage<Optional<String>> request,
-            final ExecutionContext context) {
-        context.getLogger().info("Java HTTP trigger processed a request.");
+import java.sql.*;
+import java.util.*;
+import java.util.logging.Logger;
 
-        // Parse query parameter
-        final String query = request.getQueryParameters().get("name");
-        final String name = request.getBody().orElse(query);
+public class Function
+{
+	private static final Logger log;
 
-        if (name == null) {
-            return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body("Please pass a name on the query string or in the request body").build();
-        } else {
-            return request.createResponseBuilder(HttpStatus.OK).body("Hello, " + name).build();
-        }
-    }
+	static
+	{
+		System.setProperty("java.util.logging.SimpleFormatter.format", "[%4$-7s] %5$s %n");
+		log = Logger.getLogger(Function.class.getName());
+	}
+
+	@FunctionName("CastVote")
+	public HttpResponseMessage run(@HttpTrigger(name = "req", methods =
+	{ HttpMethod.POST }, authLevel = AuthorizationLevel.ANONYMOUS) HttpRequestMessage<Optional<String>> request,
+			final ExecutionContext context)
+	{
+		context.getLogger().info("Java HTTP trigger processed a request.");
+
+		// Parse query parameter
+		Optional<String> body = request.getBody();
+
+		if (body == null)
+		{
+			return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body("Please pass a vote.").build();
+		}
+
+		VoteModel voteModel = new VoteModel(body.get());
+		castVote(voteModel);
+		return request.createResponseBuilder(HttpStatus.OK).body("Thanks for voting.").build();
+	}
+
+	private void castVote(VoteModel voteModel)
+	{
+		try
+		{
+			String voterId = voteModel.getVoterId();
+			int vote = voteModel.getVote();
+
+			log.info("Loading application properties");
+			Properties properties = new Properties();
+			properties.load(Function.class.getClassLoader().getResourceAsStream("application.properties"));
+
+			log.info("Connecting to the database");
+			Connection connection = DriverManager.getConnection(properties.getProperty("url"), properties);
+			log.info("Database connection test: " + connection.getCatalog());
+
+			// log.info("Create database schema");
+			// Scanner scanner = new
+			// Scanner(Function.class.getClassLoader().getResourceAsStream("schema.sql"));
+			// Statement statement = connection.createStatement();
+			// while (scanner.hasNextLine()) {
+			// statement.execute(scanner.nextLine());
+			// }
+
+			insertData(voterId, vote, connection);
+
+			log.info("Closing database connection");
+			connection.close();
+			AbandonedConnectionCleanupThread.uncheckedShutdown();
+		} catch (Exception e)
+		{
+			System.out.println("Exception: " + e.getCause().getMessage());
+		}
+	}
+
+	private void insertData(String voter, int vote, Connection connection) throws SQLException
+	{
+		log.info("Insert data");
+		PreparedStatement insertStatement = connection
+				.prepareStatement("INSERT INTO votes (voter, vote) VALUES (?, ?);");
+
+		insertStatement.setString(1, voter);
+		insertStatement.setInt(2, vote);
+		insertStatement.executeUpdate();
+	}
 }
