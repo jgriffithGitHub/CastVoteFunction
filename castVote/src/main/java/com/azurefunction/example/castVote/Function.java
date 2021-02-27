@@ -39,6 +39,7 @@ public class Function
 		// Parse query parameter
 		Optional<String> body = request.getBody();
 
+		
 		if (body == null)
 			return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body("You didn't pass a body. Please pass a vote.").build();
 
