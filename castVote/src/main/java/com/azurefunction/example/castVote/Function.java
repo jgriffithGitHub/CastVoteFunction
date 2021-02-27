@@ -25,7 +25,7 @@ public class Function
 	public HttpResponseMessage run(
 				@HttpTrigger( name = "req", 
 								methods =  { HttpMethod.POST }, 
-								authLevel = AuthorizationLevel.ANONYMOUS) 
+								authLevel = AuthorizationLevel.FUNCTION)
 			HttpRequestMessage<Optional<String>> request,
 			final ExecutionContext context)
 	{
@@ -48,6 +48,7 @@ public class Function
 
 		log.info("Body: " + bodyData);
 		VoteModel voteModel = new VoteModel(bodyData);
+		
 		VoteManager vm = new VoteManager();
 		
 		vm.castVote(voteModel, log);
