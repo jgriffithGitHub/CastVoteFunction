@@ -14,6 +14,7 @@ import com.mysql.cj.jdbc.AbandonedConnectionCleanupThread;
 
 import java.sql.*;
 import java.util.*;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Function
@@ -31,6 +32,10 @@ public class Function
 		log = context.getLogger();
 		log.info("Java HTTP trigger processed a request.");
 
+		//Logger logger = Logger.getLogger("com.mysql.cj");  
+		//logger.setLevel(Level.FINE);
+		//logger.setParent(log);
+		
 		// Parse query parameter
 		Optional<String> body = request.getBody();
 
@@ -40,7 +45,8 @@ public class Function
 		String bodyData = body.get();
 		if ("".equals(bodyData))
 			return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body("The body was empty. Please pass a vote.").build();
-		
+
+		log.info("Body: " + bodyData);
 		VoteModel voteModel = new VoteModel(bodyData);
 		VoteManager vm = new VoteManager();
 		

@@ -11,7 +11,7 @@ import com.mysql.cj.jdbc.AbandonedConnectionCleanupThread;
 
 public class VoteManager
 {
-	private Logger log;
+	private Logger logger;
 	
 	public VoteManager()
 	{
@@ -22,31 +22,25 @@ public class VoteManager
 	{
 		try
 		{
-			log = logger;
+			this.logger = logger;
 			
-			String voterId = voteModel.getVoterId();
-			int vote = voteModel.getVote();
-
-			log.info("Loading application properties");
+			logger.info("Loading application properties");
 			Properties properties = new Properties();
 			properties.load(Function.class.getClassLoader().getResourceAsStream("application.properties"));
 
-			log.info("Connecting to the database");
-			Connection connection = DriverManager.getConnection(properties.getProperty("url"), properties);
-			log.info("Database connection test: " + connection.getCatalog());
+			logger.info("Connecting to the database");
+			//log.info("URL: " + properties.getProperty("url") + sslCertKey); // + logKey);
+			//log.info("user: " + properties.getProperty("user"));
+			//log.info("password: " + properties.getProperty("password"));
 
-			// log.info("Create database schema");
-			// Scanner scanner = new
-			// Scanner(Function.class.getClassLoader().getResourceAsStream("schema.sql"));
-			// Statement statement = connection.createStatement();
-			// while (scanner.hasNextLine()) {
-			// statement.execute(scanner.nextLine());
-			// }
+			Connection connection = DriverManager.getConnection(properties.getProperty("url"), properties.getProperty("user"), properties.getProperty("password"));
+			logger.info("Database connection test: " + connection.getCatalog());
 
-			insertData(voterId, vote, connection);
+			insertData(voteModel, connection);
 
-			log.info("Closing database connection");
+			logger.info("Closing database connection");
 			connection.close();
+			
 			AbandonedConnectionCleanupThread.uncheckedShutdown();
 		} catch (Exception e)
 		{
@@ -54,14 +48,22 @@ public class VoteManager
 		}
 	}
 
-	private void insertData(String voter, int vote, Connection connection) throws SQLException
+	private void insertData(VoteModel voteData, Connection connection) throws SQLException
 	{
-		log.info("Insert data");
+		logger.info("Insert data");
+		
+		String voter = voteData.getVoterId();
+		int vote = voteData.getVote();
+		
+		logger.info("voter: " + voter);
+		logger.info("vote: " + vote);
+		
 		PreparedStatement insertStatement = connection
 				.prepareStatement("INSERT INTO votes (voter, vote) VALUES (?, ?);");
 
 		insertStatement.setString(1, voter);
 		insertStatement.setInt(2, vote);
 		insertStatement.executeUpdate();
+		insertStatement.close();
 	}
 }

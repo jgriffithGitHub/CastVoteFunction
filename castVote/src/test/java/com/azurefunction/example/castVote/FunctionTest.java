@@ -30,7 +30,7 @@ public class FunctionTest {
         //queryParams.put("name", "Azure");
         //doReturn(queryParams).when(req).getQueryParameters();
 
-        final Optional<String> queryBody = Optional.of("&vote=1&voterId=192.168.0.13");
+        final Optional<String> queryBody = Optional.of("vote=1&voterId=192.168.0.13");
         doReturn(queryBody).when(req).getBody();
 
         doAnswer(new Answer<HttpResponseMessage.Builder>() {
