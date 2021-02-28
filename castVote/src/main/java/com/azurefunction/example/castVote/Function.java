@@ -32,6 +32,13 @@ public class Function
 		log = context.getLogger();
 		log.info("Java HTTP trigger processed a request.");
 		
+		Map<String,String> headers = request.getHeaders();
+		
+		String principalName = headers.get("X-MS-CLIENT-PRINCIPAL-NAME");
+		String principalId = headers.get("X-MS-CLIENT-PRINCIPAL-ID");
+		log.info("principalName: " + principalName);
+		log.info("principalId: " + principalId);
+		
 		VoteModel voteModel = null;
 		
 		// Parse query parameter
@@ -58,6 +65,7 @@ public class Function
 			voteModel = new VoteModel(bodyData);
 		}
 		
+		voteModel.setVoterId(voteModel.getVoterId() + ":" + principalId + ":" + principalName);
 		VoteManager vm = new VoteManager();
 		
 		vm.castVote(voteModel, log);
