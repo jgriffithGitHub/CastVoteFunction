@@ -54,7 +54,10 @@ public class Function
 			{
 				Iterator<Entry<String, String>> iter = keySet.iterator();
 				while(iter.hasNext())
-					log.info("Header Key: " + iter.next().getKey() + "  Value: " + iter.next().getValue());
+				{
+					Entry<String, String> entry = iter.next();					
+					log.info("Header Key: " + entry.getKey() + "  Value: " + entry.getValue());
+				}
 				
 				principalName = headers.get("X-MS-CLIENT-PRINCIPAL-NAME");
 				principalId = headers.get("X-MS-CLIENT-PRINCIPAL-ID");
