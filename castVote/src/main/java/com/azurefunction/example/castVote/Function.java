@@ -25,7 +25,7 @@ public class Function
 	public HttpResponseMessage run(
 				@HttpTrigger( name = "req", 
 								methods =  { HttpMethod.POST }, 
-								authLevel = AuthorizationLevel.FUNCTION)
+								authLevel = AuthorizationLevel.ANONYMOUS)
 			HttpRequestMessage<Optional<String>> request,
 			final ExecutionContext context)
 	{
