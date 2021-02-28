@@ -18,8 +18,10 @@ public class VoteManager
 		
 	}
 	
-	public void castVote(VoteModel voteModel, Logger logger)
+	public boolean castVote(VoteModel voteModel, Logger logger)
 	{
+		boolean retVal = true;
+		
 		try
 		{
 			this.logger = logger;
@@ -29,14 +31,14 @@ public class VoteManager
 			properties.load(Function.class.getClassLoader().getResourceAsStream("application.properties"));
 
 			logger.info("Connecting to the database");
-			//log.info("URL: " + properties.getProperty("url") + sslCertKey); // + logKey);
-			//log.info("user: " + properties.getProperty("user"));
-			//log.info("password: " + properties.getProperty("password"));
+			logger.info("URL: " + properties.getProperty("url")); // + logKey);
+			logger.info("user: " + properties.getProperty("user"));
+			logger.info("password: " + properties.getProperty("password"));
 
 			Connection connection = DriverManager.getConnection(properties.getProperty("url"), properties.getProperty("user"), properties.getProperty("password"));
 			logger.info("Database connection test: " + connection.getCatalog());
 
-			insertData(voteModel, connection);
+			retVal = insertData(voteModel, connection);
 
 			logger.info("Closing database connection");
 			connection.close();
@@ -45,11 +47,16 @@ public class VoteManager
 		} catch (Exception e)
 		{
 			System.out.println("Exception: " + e.getMessage());
+			return false;
 		}
+		
+		return retVal;
 	}
 
-	private void insertData(VoteModel voteData, Connection connection) throws SQLException
+	private boolean insertData(VoteModel voteData, Connection connection) throws SQLException
 	{
+		boolean retVal = true;
+		
 		logger.info("Insert data");
 		
 		String voter = voteData.getVoterId();
@@ -63,7 +70,9 @@ public class VoteManager
 
 		insertStatement.setString(1, voter);
 		insertStatement.setInt(2, vote);
-		insertStatement.executeUpdate();
+		retVal = (insertStatement.executeUpdate() == 1);
 		insertStatement.close();
+		
+		return retVal;
 	}
 }
