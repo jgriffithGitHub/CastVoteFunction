@@ -24,7 +24,7 @@ public class Function
 	@FunctionName("CastVote")
 	public HttpResponseMessage run(
 				@HttpTrigger( name = "req", 
-								methods =  { HttpMethod.POST }, 
+								methods =  { HttpMethod.GET, HttpMethod.POST }, 
 								authLevel = AuthorizationLevel.ANONYMOUS)
 			HttpRequestMessage<Optional<String>> request,
 			final ExecutionContext context)
@@ -32,19 +32,31 @@ public class Function
 		log = context.getLogger();
 		log.info("Java HTTP trigger processed a request.");
 		
-		// Parse query parameter
-		Optional<String> body = request.getBody();
-
+		VoteModel voteModel = null;
 		
-		if (body == null)
-			return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body("You didn't pass a body. Please pass a vote.").build();
+		// Parse query parameter
+		if(request.getHttpMethod() == HttpMethod.GET)
+		{
+			log.info("HTTP Method: GET");
+			Map<String, String> qStringParams = request.getQueryParameters();
+			voteModel = new VoteModel(qStringParams);
+			if (voteModel.getVote() == 0 || voteModel.getVoterId() == null)
+				return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body("You didn't pass a vote on the query string. Please pass a vote.").build();
+		}
+		else if(request.getHttpMethod() == HttpMethod.POST)
+		{
+			log.info("HTTP Method: POST");
+			Optional<String> body = request.getBody();
+			if (body == null)
+				return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body("You didn't pass a body. Please pass a vote.").build();
 
-		String bodyData = body.get();
-		if ("".equals(bodyData))
-			return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body("The body was empty. Please pass a vote.").build();
+			String bodyData = body.get();
+			if ("".equals(bodyData))
+				return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body("The body was empty. Please pass a vote.").build();
 
-		log.info("Body: " + bodyData);
-		VoteModel voteModel = new VoteModel(bodyData);
+			log.info("Body: " + bodyData);
+			voteModel = new VoteModel(bodyData);
+		}
 		
 		VoteManager vm = new VoteManager();
 		

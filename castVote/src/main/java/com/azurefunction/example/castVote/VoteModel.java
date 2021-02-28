@@ -1,6 +1,10 @@
 package com.azurefunction.example.castVote;
 
 import java.net.URLDecoder;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 public class VoteModel
 {
@@ -14,6 +18,33 @@ public class VoteModel
 	{
 	}
 
+	public VoteModel(Map<String, String> qStringParams)
+	{
+		try
+		{
+			Set<Entry<String, String>> keys = qStringParams.entrySet();
+			
+			Iterator<Entry<String, String>> iter = keys.iterator();
+			
+			while(iter.hasNext())
+			{
+				String name = iter.next().getKey();
+				System.out.println(name);
+
+				String value = iter.next().getValue();
+				System.out.println(value);
+
+				if (name.equalsIgnoreCase(VOTE_NAME))
+					vote = Integer.parseInt(value);
+				else if (name.equalsIgnoreCase(VOTER_ID_NAME))
+					voterId = value;
+			}
+		} catch (Exception e)
+		{
+			System.out.println("Exception: " + e.getMessage());
+		}
+	}
+	
 	public VoteModel(String reqBody)
 	{
 		try

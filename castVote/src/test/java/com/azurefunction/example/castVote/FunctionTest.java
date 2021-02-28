@@ -26,12 +26,15 @@ public class FunctionTest {
         @SuppressWarnings("unchecked")
         final HttpRequestMessage<Optional<String>> req = mock(HttpRequestMessage.class);
 
-        //final Map<String, String> queryParams = new HashMap<>();
-        //queryParams.put("name", "Azure");
-        //doReturn(queryParams).when(req).getQueryParameters();
-
+        final Map<String, String> queryParams = new HashMap<>();
+        queryParams.put("vote", "1");
+        queryParams.put("voterId", "VoteByGet");
+        doReturn(queryParams).when(req).getQueryParameters();
+        System.out.println("Voted via Get");
+        
         final Optional<String> queryBody = Optional.of("vote=1&voterId=192.168.0.13");
         doReturn(queryBody).when(req).getBody();
+        System.out.println("Voted via Post");
 
         doAnswer(new Answer<HttpResponseMessage.Builder>() {
             @Override
