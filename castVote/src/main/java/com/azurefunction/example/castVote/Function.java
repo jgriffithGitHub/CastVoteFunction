@@ -31,11 +31,16 @@ public class Function
 	{
 		log = context.getLogger();
 		log.info("Java HTTP trigger processed a request.");
+		log.info("Request Method: " + request.getHttpMethod());
 		
 		Map<String,String> headers = request.getHeaders();
 		
 		String principalName = headers.get("X-MS-CLIENT-PRINCIPAL-NAME");
 		String principalId = headers.get("X-MS-CLIENT-PRINCIPAL-ID");
+		
+		principalName = (principalName == null ? "" : principalName);
+		principalId = (principalId == null ? "" : principalId);
+		
 		log.info("principalName: " + principalName);
 		log.info("principalId: " + principalId);
 		
@@ -64,7 +69,14 @@ public class Function
 			log.info("Body: " + bodyData);
 			voteModel = new VoteModel(bodyData);
 		}
+		else
+		{
+			voteModel = new VoteModel(0, "No Name");			
+		}
 		
+		if (voteModel == null)
+			return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body("Please pass a vote.").build();
+
 		voteModel.setVoterId(voteModel.getVoterId() + ":" + principalId + ":" + principalName);
 		VoteManager vm = new VoteManager();
 		
