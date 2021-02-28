@@ -109,6 +109,7 @@ public class Function
 			return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body("Something went wrong and your vote was not recorded.").build();
 		}
 		
-		return request.createResponseBuilder(HttpStatus.OK).body("Thanks for voting " + voteModel.getVoterId()).build();
+		String voterId = voteModel.getVoterId() + ":" + principalId + ":" + principalName;
+		return request.createResponseBuilder(HttpStatus.OK).body("Thanks for voting " + voterId).build();
 	}
 }
