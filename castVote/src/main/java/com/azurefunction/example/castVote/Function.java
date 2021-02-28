@@ -31,10 +31,6 @@ public class Function
 	{
 		log = context.getLogger();
 		log.info("Java HTTP trigger processed a request.");
-
-		//Logger logger = Logger.getLogger("com.mysql.cj");  
-		//logger.setLevel(Level.FINE);
-		//logger.setParent(log);
 		
 		// Parse query parameter
 		Optional<String> body = request.getBody();
