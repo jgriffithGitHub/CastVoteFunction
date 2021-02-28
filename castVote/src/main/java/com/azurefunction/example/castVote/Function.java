@@ -14,6 +14,7 @@ import com.mysql.cj.jdbc.AbandonedConnectionCleanupThread;
 
 import java.sql.*;
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -33,10 +34,32 @@ public class Function
 		log.info("Java HTTP trigger processed a request.");
 		log.info("Request Method: " + request.getHttpMethod());
 		
+		String principalName = "None provided";
+		String principalId = "None provided";
+		
 		Map<String,String> headers = request.getHeaders();
 		
-		String principalName = headers.get("X-MS-CLIENT-PRINCIPAL-NAME");
-		String principalId = headers.get("X-MS-CLIENT-PRINCIPAL-ID");
+		if(headers == null || headers.isEmpty())
+		{
+			log.info("No headers");			
+		}
+		else
+		{
+			Set<Entry<String, String>> keySet = headers.entrySet();
+			if(keySet == null || keySet.isEmpty())
+			{
+				log.info("No headers");			
+			}
+			else
+			{
+				Iterator<Entry<String, String>> iter = keySet.iterator();
+				while(iter.hasNext())
+					log.info("Header Key: " + iter.next().getKey() + "  Value: " + iter.next().getValue());
+				
+				principalName = headers.get("X-MS-CLIENT-PRINCIPAL-NAME");
+				principalId = headers.get("X-MS-CLIENT-PRINCIPAL-ID");
+			}
+		}
 		
 		principalName = (principalName == null ? "" : principalName);
 		principalId = (principalId == null ? "" : principalId);
@@ -49,7 +72,6 @@ public class Function
 		// Parse query parameter
 		if(request.getHttpMethod() == HttpMethod.GET)
 		{
-			log.info("HTTP Method: GET");
 			Map<String, String> qStringParams = request.getQueryParameters();
 			voteModel = new VoteModel(qStringParams);
 			if (voteModel.getVote() == 0 || voteModel.getVoterId() == null)
@@ -57,7 +79,6 @@ public class Function
 		}
 		else if(request.getHttpMethod() == HttpMethod.POST)
 		{
-			log.info("HTTP Method: POST");
 			Optional<String> body = request.getBody();
 			if (body == null)
 				return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body("You didn't pass a body. Please pass a vote.").build();

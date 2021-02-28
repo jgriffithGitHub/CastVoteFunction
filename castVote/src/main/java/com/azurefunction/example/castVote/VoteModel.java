@@ -25,14 +25,14 @@ public class VoteModel
 			Set<Entry<String, String>> keys = qStringParams.entrySet();
 			
 			Iterator<Entry<String, String>> iter = keys.iterator();
+			System.out.println("query string -- " + keys.size() + " parameters");
 			
 			while(iter.hasNext())
 			{
-				String name = iter.next().getKey();
-				System.out.println(name);
-
-				String value = iter.next().getValue();
-				System.out.println(value);
+				Entry<String, String> param = iter.next();
+				String name = param.getKey();
+				String value = param.getValue();
+				System.out.println("query string -- " + name + ": " + value);
 
 				if (name.equalsIgnoreCase(VOTE_NAME))
 					vote = Integer.parseInt(value);
