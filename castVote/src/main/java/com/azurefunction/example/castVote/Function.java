@@ -10,12 +10,8 @@ import com.microsoft.azure.functions.annotation.FunctionName;
 import com.microsoft.azure.functions.annotation.HttpTrigger;
 
 import java.util.Optional;
-import com.mysql.cj.jdbc.AbandonedConnectionCleanupThread;
-
-import java.sql.*;
 import java.util.*;
 import java.util.Map.Entry;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Function
