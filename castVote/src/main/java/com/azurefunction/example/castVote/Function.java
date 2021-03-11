@@ -57,6 +57,12 @@ public class Function
 				
 				principalName = headers.get("X-MS-CLIENT-PRINCIPAL-NAME");
 				principalId = headers.get("X-MS-CLIENT-PRINCIPAL-ID");
+				/*
+			 	X-MS-TOKEN-AAD-ID-TOKEN
+			 	X-MS-TOKEN-AAD-ACCESS-TOKEN
+			 	X-MS-TOKEN-AAD-EXPIRES-ON
+			 	X-MS-TOKEN-AAD-REFRESH-TOKEN
+			 	*/
 			}
 		}
 		
@@ -65,7 +71,8 @@ public class Function
 		
 		log.info("principalName: " + principalName);
 		log.info("principalId: " + principalId);
-		
+
+
 		VoteModel voteModel = null;
 		
 		// Parse query parameter
