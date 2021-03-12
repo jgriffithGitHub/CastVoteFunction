@@ -57,16 +57,8 @@ public class Function
 					log.info("Header Key: " + entry.getKey() + "  Value: " + entry.getValue());
 				}
 				
-				//principalName = headers.get("X-MS-CLIENT-PRINCIPAL-NAME");
-				//principalId = headers.get("X-MS-CLIENT-PRINCIPAL-ID");
-				principalName = headers.get("X-MS-TOKEN-AAD-ID-TOKEN");
-				principalId = headers.get("X-MS-TOKEN-AAD-ACCESS-TOKEN");
-				/*
-			 	X-MS-TOKEN-AAD-ID-TOKEN
-			 	X-MS-TOKEN-AAD-ACCESS-TOKEN
-			 	X-MS-TOKEN-AAD-EXPIRES-ON
-			 	X-MS-TOKEN-AAD-REFRESH-TOKEN
-			 	*/
+				principalName = headers.get("x-ms-client-principal-name");
+				principalId = headers.get("x-ms-client-principal-id");
 			}
 		}
 		
