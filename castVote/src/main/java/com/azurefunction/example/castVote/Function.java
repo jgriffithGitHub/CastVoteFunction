@@ -55,8 +55,10 @@ public class Function
 					log.info("Header Key: " + entry.getKey() + "  Value: " + entry.getValue());
 				}
 				
-				principalName = headers.get("X-MS-CLIENT-PRINCIPAL-NAME");
-				principalId = headers.get("X-MS-CLIENT-PRINCIPAL-ID");
+				//principalName = headers.get("X-MS-CLIENT-PRINCIPAL-NAME");
+				//principalId = headers.get("X-MS-CLIENT-PRINCIPAL-ID");
+				principalName = headers.get("X-MS-TOKEN-AAD-ID-TOKEN");
+				principalId = headers.get("X-MS-TOKEN-AAD-ACCESS-TOKEN");
 				/*
 			 	X-MS-TOKEN-AAD-ID-TOKEN
 			 	X-MS-TOKEN-AAD-ACCESS-TOKEN
@@ -72,7 +74,7 @@ public class Function
 		log.info("principalName: " + principalName);
 		log.info("principalId: " + principalId);
 
-
+		String retText = principalName + ":" + principalId + " - ";
 		VoteModel voteModel = null;
 		
 		// Parse query parameter
@@ -81,17 +83,17 @@ public class Function
 			Map<String, String> qStringParams = request.getQueryParameters();
 			voteModel = new VoteModel(qStringParams);
 			if (voteModel.getVote() == 0 || voteModel.getVoterId() == null)
-				return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body("You didn't pass a vote on the query string. Please pass a vote.").build();
+				return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body(retText + "You didn't pass a vote on the query string. Please pass a vote.").build();
 		}
 		else if(request.getHttpMethod() == HttpMethod.POST)
 		{
 			Optional<String> body = request.getBody();
 			if (body == null)
-				return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body("You didn't pass a body. Please pass a vote.").build();
+				return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body(retText + "You didn't pass a body. Please pass a vote.").build();
 
 			String bodyData = body.get();
 			if ("".equals(bodyData))
-				return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body("The body was empty. Please pass a vote.").build();
+				return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body(retText + "The body was empty. Please pass a vote.").build();
 
 			log.info("Body: " + bodyData);
 			voteModel = new VoteModel(bodyData);
@@ -102,7 +104,7 @@ public class Function
 		}
 		
 		if (voteModel == null)
-			return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body("Please pass a vote.").build();
+			return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body(retText + "Please pass a vote.").build();
 
 		voteModel.setVoterId(voteModel.getVoterId() + ":" + principalId + ":" + principalName);
 		VoteManager vm = new VoteManager();
