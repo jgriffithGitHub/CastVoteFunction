@@ -33,6 +33,7 @@ public class Function
 		String principalName = "None provided";
 		String principalId = "None provided";
 		
+		String retText = "Headers: ";
 		Map<String,String> headers = request.getHeaders();
 		
 		if(headers == null || headers.isEmpty())
@@ -51,7 +52,8 @@ public class Function
 				Iterator<Entry<String, String>> iter = keySet.iterator();
 				while(iter.hasNext())
 				{
-					Entry<String, String> entry = iter.next();					
+					Entry<String, String> entry = iter.next();	
+					retText += " ++ Header Key: " + entry.getKey() + "  Value: " + entry.getValue();
 					log.info("Header Key: " + entry.getKey() + "  Value: " + entry.getValue());
 				}
 				
@@ -74,7 +76,7 @@ public class Function
 		log.info("principalName: " + principalName);
 		log.info("principalId: " + principalId);
 
-		String retText = principalName + ":" + principalId + " - ";
+		retText += " -- principalName: " + principalName + ":" + principalId + " - ";
 		VoteModel voteModel = null;
 		
 		// Parse query parameter
