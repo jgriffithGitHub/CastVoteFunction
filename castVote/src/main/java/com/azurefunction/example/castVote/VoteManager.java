@@ -7,12 +7,14 @@ import java.sql.SQLException;
 import java.util.Properties;
 import java.util.logging.Logger;
 import com.mysql.cj.jdbc.AbandonedConnectionCleanupThread;
-
+import com.azure.core.http.policy.HttpLogDetailLevel;
+import com.azure.core.http.policy.HttpLogOptions;
 import com.azure.identity.DefaultAzureCredential;
 import com.azure.identity.DefaultAzureCredentialBuilder;
 
 import com.azure.security.keyvault.secrets.SecretClient;
 import com.azure.security.keyvault.secrets.SecretClientBuilder;
+import com.microsoft.rest.credentials.TokenCredentials;
 
 public class VoteManager
 {
@@ -34,9 +36,9 @@ public class VoteManager
 			
 			logger.info("Loading secrets");
 			String keyVaultName = KEY_VALUT_NAME;
-			String keyVaultUri = "https://" + keyVaultName + ".vault.azure.net";
+			String keyVaultUri = "https://" + keyVaultName + ".vault.azure.net/";
 			logger.info("keyVaultUri: " + keyVaultUri);
-
+			
 		    DefaultAzureCredential defaultCredential = new DefaultAzureCredentialBuilder().build();
 			logger.info("Default Credential Builder created");
 

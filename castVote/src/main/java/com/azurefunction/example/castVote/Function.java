@@ -29,7 +29,7 @@ public class Function
 		log = context.getLogger();
 		log.info("Java HTTP trigger processed a request.");
 		log.info("Request Method: " + request.getHttpMethod());
-		
+
 		String principalName = "None provided";
 		String principalId = "None provided";
 		
@@ -103,10 +103,10 @@ public class Function
 		voteModel.setVoterId(voteModel.getVoterId() + ":" + principalId + ":" + principalName);
 		VoteManager vm = new VoteManager();
 		
-		//if(!vm.castVote(voteModel, log))
-		//{
-		//	return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body("Something went wrong and your vote was not recorded.").build();
-		//}
+		if(!vm.castVote(voteModel, log))
+		{
+			return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body("Something went wrong and your vote was not recorded.").build();
+		}
 		
 		String voterId = voteModel.getVoterId() + ":" + principalId + ":" + principalName;
 		return request.createResponseBuilder(HttpStatus.OK).body("Thanks for voting " + voterId).build();
