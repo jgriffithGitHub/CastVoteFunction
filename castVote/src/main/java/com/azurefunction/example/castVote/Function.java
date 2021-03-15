@@ -59,36 +59,61 @@ public class Function
 
 		VoteModel voteModel = null;
 		String bodyData = "Request Method = " + request.getHttpMethod();
-		
-		// Parse query parameter
-		// Note that the request method can be null, so we have to assume 
-		// some method in order to get the tests to work at all.
-		if(request.getHttpMethod() == HttpMethod.POST)
+				
+		String uiTemplate = "";
+		try
 		{
-			Optional<String> body = request.getBody();
-			if (body == null)
-				return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body(retText + "You didn't pass a body. Please pass a vote.").build();
+			PageBuilder pb = new PageBuilder();
+			
+			pb.loadTemplate();
+			pb.setElectionId(log);			
+			pb.setTitle(log);
+			// Parse query parameter
+			// Note that the request method can be null, so we have to assume 
+			// some method in order to get the tests to work at all.
+			if(request.getHttpMethod() == HttpMethod.POST)
+			{
+				Optional<String> body = request.getBody();
+				if (body == null)
+				{
+					pb.setMessage(retText + "You didn't pass a body. Please pass a vote.", log);
+					uiTemplate = pb.getPage();
+					return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body(uiTemplate).build();
+				}
+				
+				bodyData = body.get();
+				if ("".equals(bodyData))
+				{
+					pb.setMessage(retText + "The body was empty. Please pass a vote.", log);
+					uiTemplate = pb.getPage();
+					return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body(uiTemplate).build();
+				}
 
-			bodyData = body.get();
-			if ("".equals(bodyData))
-				return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body(retText + "The body was empty. Please pass a vote.").build();
-
-			log.info("Body: " + bodyData);
-			voteModel = new VoteModel(bodyData, principalName, principalId);
-		}
-		else // Assume GET Method
+				log.info("Body: " + bodyData);
+				voteModel = new VoteModel(bodyData, principalName, principalId);
+			}
+			else // Assume GET Method
+			{
+				Map<String, String> qStringParams = request.getQueryParameters();
+				voteModel = new VoteModel(qStringParams, principalName, principalId);
+			}
+			
+			VoteManager vm = new VoteManager();		
+			if(!vm.castVote(voteModel, log))
+			{
+				pb.setMessage("We could not record your vote. Post body: " + bodyData, log);
+				uiTemplate = pb.getPage();
+				return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body(uiTemplate).build();
+			}
+			
+			pb.setMessage("Thanks for voting " + principalName, log);
+			uiTemplate = pb.getPage();
+	 	} 
+		catch (Exception e)
 		{
-			Map<String, String> qStringParams = request.getQueryParameters();
-			voteModel = new VoteModel(qStringParams, principalName, principalId);
+			uiTemplate = "<html><head></head><body>Exception:<br>" + e.getMessage() + "</body></html>";
 		}
 		
-		VoteManager vm = new VoteManager();		
-		if(!vm.castVote(voteModel, log))
-		{
-			return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body("We could not record your vote. Post body: " + bodyData).build();
-		}
-		
-		String voterId = voteModel.getVoterId() + ":" + principalId + ":" + principalName;
-		return request.createResponseBuilder(HttpStatus.OK).body("Thanks for voting " + principalName).build();
+		return request.createResponseBuilder(HttpStatus.OK).body(uiTemplate).build();
 	}
 }
