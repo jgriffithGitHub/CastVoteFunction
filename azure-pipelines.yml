@@ -1,5 +1,3 @@
-# at the top of your YAML file 
-# set some variables that you'll need when you deploy
 variables:
   # the name of the service connection that you created above
   serviceConnectionToAzure: 'AzureCastVote'
