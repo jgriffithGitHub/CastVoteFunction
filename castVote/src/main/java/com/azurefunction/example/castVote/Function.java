@@ -58,6 +58,7 @@ public class Function
 		log.info("principalId: " + principalId);
 
 		VoteModel voteModel = null;
+		String bodyData = "No Body Data";
 		
 		// Parse query parameter
 		// Note that the request method can be null, so we have to assume 
@@ -68,7 +69,7 @@ public class Function
 			if (body == null)
 				return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body(retText + "You didn't pass a body. Please pass a vote.").build();
 
-			String bodyData = body.get();
+			bodyData = body.get();
 			if ("".equals(bodyData))
 				return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body(retText + "The body was empty. Please pass a vote.").build();
 
@@ -87,7 +88,7 @@ public class Function
 		VoteManager vm = new VoteManager();		
 		if(!vm.castVote(voteModel, log))
 		{
-			return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body("Something went wrong and your vote was not recorded.").build();
+			return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body("Something went wrong and your vote was not recorded. Post body: " + bodyData).build();
 		}
 		
 		String voterId = voteModel.getVoterId() + ":" + principalId + ":" + principalName;
