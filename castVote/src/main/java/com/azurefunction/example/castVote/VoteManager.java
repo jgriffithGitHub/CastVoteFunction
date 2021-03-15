@@ -18,7 +18,7 @@ public class VoteManager
 		
 	}
 	
-	public boolean castVote(VoteModel voteModel, Logger logger)
+	public boolean castVote(VoteModel voteModel, int electionId, Logger logger)
 	{
 		boolean retVal = true;
 		
@@ -38,7 +38,7 @@ public class VoteManager
 			Connection connection = DriverManager.getConnection(properties.getProperty("url"), properties.getProperty("user"), properties.getProperty("password"));
 			logger.info("Database connection test: " + connection.getCatalog());
 			
-			retVal = insertData(voteModel, connection);
+			retVal = insertData(voteModel, electionId, connection);
 
 			logger.info("Closing database connection");
 			connection.close();
@@ -53,7 +53,7 @@ public class VoteManager
 		return retVal;
 	}
 
-	private boolean insertData(VoteModel voteData, Connection connection) throws SQLException
+	private boolean insertData(VoteModel voteData, int electionId, Connection connection) throws SQLException
 	{
 		boolean retVal = true;
 		
@@ -64,12 +64,14 @@ public class VoteManager
 		
 		logger.info("voter: " + voter);
 		logger.info("vote: " + vote);
+		logger.info("ElectionID: " + electionId);
 		
 		PreparedStatement insertStatement = connection
-				.prepareStatement("INSERT INTO votes (voter, vote) VALUES (?, ?);");
+				.prepareStatement("INSERT INTO votes (voter, vote, idElection) VALUES (?, ?, ?);");
 
 		insertStatement.setString(1, voter);
 		insertStatement.setInt(2, vote);
+		insertStatement.setInt(3, electionId);
 		retVal = (insertStatement.executeUpdate() == 1);
 		insertStatement.close();
 		

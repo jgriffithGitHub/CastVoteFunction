@@ -66,7 +66,7 @@ public class Function
 			PageBuilder pb = new PageBuilder();
 			
 			pb.loadTemplate();
-			pb.setElectionId(log);			
+			int electionId = pb.setElectionId(log);			
 			pb.setTitle(log);
 			// Parse query parameter
 			// Note that the request method can be null, so we have to assume 
@@ -99,7 +99,7 @@ public class Function
 			}
 			
 			VoteManager vm = new VoteManager();		
-			if(!vm.castVote(voteModel, log))
+			if(!vm.castVote(voteModel, electionId, log))
 			{
 				pb.setMessage("We could not record your vote. Post body: " + bodyData, log);
 				uiTemplate = pb.getPage();
