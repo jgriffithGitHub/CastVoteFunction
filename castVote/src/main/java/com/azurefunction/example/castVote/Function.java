@@ -58,7 +58,7 @@ public class Function
 		log.info("principalId: " + principalId);
 
 		VoteModel voteModel = null;
-		String bodyData = "No Body Data";
+		String bodyData = "Request Method = " + request.getHttpMethod();
 		
 		// Parse query parameter
 		// Note that the request method can be null, so we have to assume 
@@ -82,9 +82,6 @@ public class Function
 			voteModel = new VoteModel(qStringParams, principalName, principalId);
 		}
 		
-		//if (voteModel == null)
-		//	return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body(retText + "Please pass a vote.").build();
-
 		VoteManager vm = new VoteManager();		
 		if(!vm.castVote(voteModel, log))
 		{
