@@ -10,7 +10,7 @@ variables:
   #
   # the name of your functionApp is what you provided as
   # stagingDirectory in pom.xml
-  functionAppName: 'AzureCastVote'
+  functionAppName: 'castVote'
   POM_XML_Directory: 'castVote'
 # ...
 # Build your Java project and run tests with Apache Maven.
