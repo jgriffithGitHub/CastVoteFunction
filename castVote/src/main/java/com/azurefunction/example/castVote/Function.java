@@ -78,7 +78,7 @@ public class Function
 				{
 					pb.setMessage(retText + "You didn't pass a body. Please pass a vote.", log);
 					uiTemplate = pb.getPage();
-					return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body(uiTemplate).build();
+					return request.createResponseBuilder(HttpStatus.BAD_REQUEST).header("Content-Type", "text/html").body(uiTemplate).build();
 				}
 				
 				bodyData = body.get();
@@ -86,7 +86,7 @@ public class Function
 				{
 					pb.setMessage(retText + "The body was empty. Please pass a vote.", log);
 					uiTemplate = pb.getPage();
-					return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body(uiTemplate).build();
+					return request.createResponseBuilder(HttpStatus.BAD_REQUEST).header("Content-Type", "text/html").body(uiTemplate).build();
 				}
 
 				log.info("Body: " + bodyData);
@@ -103,7 +103,7 @@ public class Function
 			{
 				pb.setMessage("We could not record your vote. Post body: " + bodyData, log);
 				uiTemplate = pb.getPage();
-				return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body(uiTemplate).build();
+				return request.createResponseBuilder(HttpStatus.BAD_REQUEST).header("Content-Type", "text/html").body(uiTemplate).build();
 			}
 			
 			pb.setMessage("Thanks for voting " + principalName, log);
@@ -114,6 +114,6 @@ public class Function
 			uiTemplate = "<html><head></head><body>Exception:<br>" + e.getMessage() + "</body></html>";
 		}
 		
-		return request.createResponseBuilder(HttpStatus.OK).body(uiTemplate).build();
+		return request.createResponseBuilder(HttpStatus.OK).header("Content-Type", "text/html").body(uiTemplate).build();
 	}
 }
