@@ -32,9 +32,9 @@ public class FunctionTest {
         doReturn(queryParams).when(req).getQueryParameters();
         System.out.println("Voted via Get");
         
-        final Optional<String> queryBody = Optional.of("vote=1&voterId=192.168.0.13");
-        doReturn(queryBody).when(req).getBody();
-        System.out.println("Voted via Post");
+        //final Optional<String> queryBody = Optional.of("vote=1&voterId=192.168.0.13");
+        //doReturn(queryBody).when(req).getBody();
+        //System.out.println("Voted via Post");
 
         doAnswer(new Answer<HttpResponseMessage.Builder>() {
             @Override

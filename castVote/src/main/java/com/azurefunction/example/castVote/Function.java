@@ -60,14 +60,9 @@ public class Function
 		VoteModel voteModel = null;
 		
 		// Parse query parameter
-		if(request.getHttpMethod() == HttpMethod.GET)
-		{
-			Map<String, String> qStringParams = request.getQueryParameters();
-			voteModel = new VoteModel(qStringParams);
-			if (voteModel.getVote() == 0 || voteModel.getVoterId() == null)
-				return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body(retText + "You didn't pass a vote on the query string. Please pass a vote.").build();
-		}
-		else if(request.getHttpMethod() == HttpMethod.POST)
+		// Note that the request method can be null, so we have to assume 
+		// some method in order to get the tests to work at all.
+		if(request.getHttpMethod() == HttpMethod.POST)
 		{
 			Optional<String> body = request.getBody();
 			if (body == null)
@@ -80,9 +75,12 @@ public class Function
 			log.info("Body: " + bodyData);
 			voteModel = new VoteModel(bodyData);
 		}
-		else
+		else // Assume GET Method
 		{
-			voteModel = new VoteModel(0, "No Name");			
+			Map<String, String> qStringParams = request.getQueryParameters();
+			voteModel = new VoteModel(qStringParams);
+			if (voteModel.getVote() == 0 || voteModel.getVoterId() == null)
+				return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body(retText + "You didn't pass a vote on the query string. Please pass a vote.").build();
 		}
 		
 		//if (voteModel == null)
