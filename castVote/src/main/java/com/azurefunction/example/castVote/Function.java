@@ -91,6 +91,6 @@ public class Function
 		}
 		
 		String voterId = voteModel.getVoterId() + ":" + principalId + ":" + principalName;
-		return request.createResponseBuilder(HttpStatus.OK).body("Thanks for voting " + voterId).build();
+		return request.createResponseBuilder(HttpStatus.OK).body("Thanks for voting " + principalName).build();
 	}
 }
