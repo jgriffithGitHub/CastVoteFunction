@@ -7,14 +7,6 @@ import java.sql.SQLException;
 import java.util.Properties;
 import java.util.logging.Logger;
 import com.mysql.cj.jdbc.AbandonedConnectionCleanupThread;
-import com.azure.core.http.policy.HttpLogDetailLevel;
-import com.azure.core.http.policy.HttpLogOptions;
-import com.azure.identity.DefaultAzureCredential;
-import com.azure.identity.DefaultAzureCredentialBuilder;
-
-import com.azure.security.keyvault.secrets.SecretClient;
-import com.azure.security.keyvault.secrets.SecretClientBuilder;
-import com.microsoft.rest.credentials.TokenCredentials;
 
 public class VoteManager
 {
@@ -34,43 +26,17 @@ public class VoteManager
 		{
 			this.logger = logger;
 			
-			logger.info("Loading secrets");
-			String keyVaultName = KEY_VALUT_NAME;
-			String keyVaultUri = "https://" + keyVaultName + ".vault.azure.net/";
-			logger.info("keyVaultUri: " + keyVaultUri);
-			
-		    DefaultAzureCredential defaultCredential = new DefaultAzureCredentialBuilder().build();
-			logger.info("Default Credential Builder created");
-
-			SecretClient secretClient = new SecretClientBuilder()
-			    .vaultUrl(keyVaultUri)
-			    .credential(defaultCredential)
-			    .buildClient();		
-			logger.info("Secret Client created");
-			
-			String url = secretClient.getSecret("url").getValue();
-			String user = secretClient.getSecret("user").getValue();
-			String password = secretClient.getSecret("password").getValue();
-			logger.info("URL: " + url);
-			logger.info("user: " + user);
-			logger.info("password: " + password);
-
-			Connection connection = DriverManager.getConnection(url, user, password);
-			logger.info("Database connection test: " + connection.getCatalog());
-
-			/*
 			logger.info("Loading application properties");
 			Properties properties = new Properties();
 			properties.load(Function.class.getClassLoader().getResourceAsStream("application.properties"));
 
 			logger.info("Connecting to the database");
-			logger.info("URL: " + properties.getProperty("url")); // + logKey);
+			logger.info("URL: " + properties.getProperty("url"));
 			logger.info("user: " + properties.getProperty("user"));
 			logger.info("password: " + properties.getProperty("password"));
 
 			Connection connection = DriverManager.getConnection(properties.getProperty("url"), properties.getProperty("user"), properties.getProperty("password"));
 			logger.info("Database connection test: " + connection.getCatalog());
-			 */
 			
 			retVal = insertData(voteModel, connection);
 

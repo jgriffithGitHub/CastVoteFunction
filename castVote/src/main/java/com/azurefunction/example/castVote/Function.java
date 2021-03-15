@@ -48,27 +48,15 @@ public class Function
 				log.info("No headers");			
 			}
 			else
-			{
-				Iterator<Entry<String, String>> iter = keySet.iterator();
-				while(iter.hasNext())
-				{
-					Entry<String, String> entry = iter.next();	
-					retText += " ++ Header Key: " + entry.getKey() + "  Value: " + entry.getValue();
-					log.info("Header Key: " + entry.getKey() + "  Value: " + entry.getValue());
-				}
-				
+			{				
 				principalName = headers.get("x-ms-client-principal-name");
 				principalId = headers.get("x-ms-client-principal-id");
 			}
 		}
 		
-		principalName = (principalName == null ? "" : principalName);
-		principalId = (principalId == null ? "" : principalId);
-		
 		log.info("principalName: " + principalName);
 		log.info("principalId: " + principalId);
 
-		retText += " -- principalName: " + principalName + ":" + principalId + " - ";
 		VoteModel voteModel = null;
 		
 		// Parse query parameter
@@ -97,8 +85,8 @@ public class Function
 			voteModel = new VoteModel(0, "No Name");			
 		}
 		
-		if (voteModel == null)
-			return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body(retText + "Please pass a vote.").build();
+		//if (voteModel == null)
+		//	return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body(retText + "Please pass a vote.").build();
 
 		voteModel.setVoterId(voteModel.getVoterId() + ":" + principalId + ":" + principalName);
 		VoteManager vm = new VoteManager();

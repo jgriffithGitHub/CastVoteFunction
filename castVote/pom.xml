@@ -45,27 +45,6 @@
             <artifactId>mysql-connector-java</artifactId>
             <version>8.0.20</version>
         </dependency>
-        
-		<!-- https://mvnrepository.com/artifact/com.microsoft.azure/azure-keyvault -->
-		<dependency>
-		    <groupId>com.microsoft.azure</groupId>
-		    <artifactId>azure-keyvault</artifactId>
-		    <version>1.2.4</version>
-		</dependency>
-		
-		<!-- https://mvnrepository.com/artifact/com.azure/azure-security-keyvault-secrets -->
-		<dependency>
-		    <groupId>com.azure</groupId>
-		    <artifactId>azure-security-keyvault-secrets</artifactId>
-		    <version>4.2.5</version>
-		</dependency>
-		
-		<!-- https://mvnrepository.com/artifact/com.azure/azure-identity -->
-		<dependency>
-		    <groupId>com.azure</groupId>
-		    <artifactId>azure-identity</artifactId>
-		    <version>1.2.3</version>
-		</dependency>
     </dependencies>
 
     <build>
