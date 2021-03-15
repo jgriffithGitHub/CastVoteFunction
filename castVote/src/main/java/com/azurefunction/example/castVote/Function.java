@@ -73,22 +73,18 @@ public class Function
 				return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body(retText + "The body was empty. Please pass a vote.").build();
 
 			log.info("Body: " + bodyData);
-			voteModel = new VoteModel(bodyData);
+			voteModel = new VoteModel(bodyData, principalName, principalId);
 		}
 		else // Assume GET Method
 		{
 			Map<String, String> qStringParams = request.getQueryParameters();
-			voteModel = new VoteModel(qStringParams);
-			if (voteModel.getVote() == 0 || voteModel.getVoterId() == null)
-				return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body(retText + "You didn't pass a vote on the query string. Please pass a vote.").build();
+			voteModel = new VoteModel(qStringParams, principalName, principalId);
 		}
 		
 		//if (voteModel == null)
 		//	return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body(retText + "Please pass a vote.").build();
 
-		voteModel.setVoterId(voteModel.getVoterId() + ":" + principalId + ":" + principalName);
-		VoteManager vm = new VoteManager();
-		
+		VoteManager vm = new VoteManager();		
 		if(!vm.castVote(voteModel, log))
 		{
 			return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body("Something went wrong and your vote was not recorded.").build();

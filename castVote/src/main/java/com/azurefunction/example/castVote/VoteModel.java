@@ -18,10 +18,12 @@ public class VoteModel
 	{
 	}
 
-	public VoteModel(Map<String, String> qStringParams)
+	public VoteModel(Map<String, String> qStringParams, String principalName, String principalId)
 	{
 		try
 		{
+			voterId = principalName + ":" + principalId;
+					
 			Set<Entry<String, String>> keys = qStringParams.entrySet();
 			
 			Iterator<Entry<String, String>> iter = keys.iterator();
@@ -36,8 +38,6 @@ public class VoteModel
 
 				if (name.equalsIgnoreCase(VOTE_NAME))
 					vote = Integer.parseInt(value);
-				else if (name.equalsIgnoreCase(VOTER_ID_NAME))
-					voterId = value;
 			}
 		} catch (Exception e)
 		{
@@ -45,10 +45,12 @@ public class VoteModel
 		}
 	}
 	
-	public VoteModel(String reqBody)
+	public VoteModel(String reqBody, String principalName, String principalId)
 	{
 		try
 		{
+			voterId = principalName + ":" + principalId;
+
 			String[] pairs = reqBody.split("\\&");
 			for (int i = 0; i < pairs.length; i++)
 			{
@@ -61,8 +63,6 @@ public class VoteModel
 
 				if (name.equalsIgnoreCase(VOTE_NAME))
 					vote = Integer.parseInt(value);
-				else if (name.equalsIgnoreCase(VOTER_ID_NAME))
-					voterId = value;
 			}
 		} catch (Exception e)
 		{
