@@ -85,7 +85,7 @@ public class Function
 		VoteManager vm = new VoteManager();		
 		if(!vm.castVote(voteModel, log))
 		{
-			return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body("Something went wrong and your vote was not recorded. Post body: " + bodyData).build();
+			return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body("We could not reord your vote. Post body: " + bodyData).build();
 		}
 		
 		String voterId = voteModel.getVoterId() + ":" + principalId + ":" + principalName;
