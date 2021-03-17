@@ -54,7 +54,6 @@ public class PageBuilder
 			ResultSet rs = selectStatement.executeQuery();
 			if(rs.next())
 			{
-				log.info("Found a row");
 				electionId = rs.getInt("idElection");
 				retVal = electionId;
 			}
@@ -76,17 +75,13 @@ public class PageBuilder
 	{
 		try
 		{
-			log.info("Setting title");
-			
 			PreparedStatement selectStatement = connection
 					.prepareStatement("select * from electionDetails where idElection = " + electionId + ";");
 	
 			ResultSet rs = selectStatement.executeQuery();
 			if(rs.next())
 			{
-				log.info("Found a row");
 				String title = rs.getString("electionTitle");
-				log.info("Title = " + title);
 				uiTemplate = uiTemplate.replaceAll(TITLE_MARKER, title);
 			}
 			else
@@ -105,7 +100,6 @@ public class PageBuilder
 	{
 		try
 		{
-			log.info("Setting message");
 			uiTemplate = uiTemplate.replaceAll(MESSAGE_MARKER, message);
 		}
 		catch(Exception e)

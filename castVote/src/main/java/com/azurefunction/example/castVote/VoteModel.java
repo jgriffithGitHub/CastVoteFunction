@@ -56,10 +56,8 @@ public class VoteModel
 			{
 				String[] fields = pairs[i].split("=");
 				String name = URLDecoder.decode(fields[0], "UTF-8");
-				System.out.println(name);
 
 				String value = URLDecoder.decode(fields[1], "UTF-8");
-				System.out.println(value);
 
 				if (name.equalsIgnoreCase(VOTE_NAME))
 					vote = Integer.parseInt(value);

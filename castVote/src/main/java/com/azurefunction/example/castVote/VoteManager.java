@@ -11,7 +11,6 @@ import com.mysql.cj.jdbc.AbandonedConnectionCleanupThread;
 public class VoteManager
 {
 	private Logger logger;
-	private static final String KEY_VALUT_NAME = "azurefunctionsecrets";
 	
 	public VoteManager()
 	{
@@ -24,27 +23,17 @@ public class VoteManager
 		
 		try
 		{
-			this.logger = logger;
-			
-			logger.info("Loading application properties");
-			Properties properties = new Properties();
-			properties.load(Function.class.getClassLoader().getResourceAsStream("application.properties"));
-
-			logger.info("Connecting to the database");
-			logger.info("URL: " + properties.getProperty("url"));
-			logger.info("user: " + properties.getProperty("user"));
-			logger.info("password: " + properties.getProperty("password"));
-
-			Connection connection = DriverManager.getConnection(properties.getProperty("url"), properties.getProperty("user"), properties.getProperty("password"));
-			logger.info("Database connection test: " + connection.getCatalog());
-			
-			retVal = insertData(voteModel, electionId, connection);
-
-			logger.info("Closing database connection");
-			connection.close();
+			//Properties properties = new Properties();
+			//properties.load(Function.class.getClassLoader().getResourceAsStream("application.properties"));
+//
+			//Connection connection = DriverManager.getConnection(properties.getProperty("url"), properties.getProperty("user"), properties.getProperty("password"));			
+			DatabaseConnection dbConn = new DatabaseConnection();
+			retVal = insertData(voteModel, electionId, dbConn.getConnection());
+			dbConn.closeConnection();
 			
 			AbandonedConnectionCleanupThread.uncheckedShutdown();
-		} catch (Exception e)
+		}
+		catch (Exception e)
 		{
 			System.out.println("Exception: " + e.getMessage());
 			return false;
@@ -57,14 +46,8 @@ public class VoteManager
 	{
 		boolean retVal = true;
 		
-		logger.info("Insert data");
-		
 		String voter = voteData.getVoterId();
 		int vote = voteData.getVote();
-		
-		logger.info("voter: " + voter);
-		logger.info("vote: " + vote);
-		logger.info("ElectionID: " + electionId);
 		
 		PreparedStatement insertStatement = connection
 				.prepareStatement("INSERT INTO votes (voter, vote, idElection) VALUES (?, ?, ?);");
